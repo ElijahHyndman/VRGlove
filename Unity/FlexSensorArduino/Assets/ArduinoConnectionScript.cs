@@ -5,6 +5,8 @@ using UnityEngine.UI;
 using System.IO.Ports;
 using TMPro;
 
+using Cooks;
+
 public class ArduinoConnectionScript : MonoBehaviour
 {
     // Related scripts
