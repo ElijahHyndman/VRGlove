@@ -1,9 +1,13 @@
 Requirements
 
+Glove Object (GO)
+- A GO exists independent of whether connection to the glove hardware is established
+- A GO shall support multiple physical layouts of sensors on hand 
+
 Connection
 - shall connect through Bluetooth or through USB-Link
 - shall transition bluetooth->USB automatically when USB wire connected
-- Instantiating Glove object shall sit in idle while listening for connection
+- Instantiated GO shall sit idle (default state) while listening for connection
 - disconnecting (lost power, bluetooth->USB transition) returns glove to idle
 
 Boards
@@ -14,6 +18,3 @@ Application
 - shall provide raw character data for debugging
 - shall provide individual sensor values (numbers)
 - shall provide individual sensor value representation (graphical representation)
-
-Deployment
-- one glove object shall support multiple interactions
