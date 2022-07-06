@@ -17,12 +17,15 @@ all: Comm
 # 	-AppleLibMain.cs located within folder "testing"
 
 # Variables
-run% : NAME = $(subst run,,$@)# "Comm", for CommLib
+run% : NAME = $(subst run,,$@)#Remove "run" from name
 run% : LIBRARY_FILE = $(NAME)Lib/$(NAME).dll# dll file location
 run% : MAIN_FILE = testing/$(NAME)LibMain# location without .cs or .exe extension
 run% :
+	mcs -t:library $(NAME)Lib/*.cs
 	@# Compile {NAME}LibMain.cs file inside testing folder using {Name}Lib folder's .dll
 	mcs -r:$(LIBRARY_FILE) $(MAIN_FILE).cs
+	@# Move required .dll to execution folder
+	cp $(LIBRARY_FILE) testing/$(NAME).dll
 	@# Run {NAME}LibMain.exe
 	mono $(MAIN_FILE).exe
 
