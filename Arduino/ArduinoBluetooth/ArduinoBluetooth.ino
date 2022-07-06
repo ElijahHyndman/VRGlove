@@ -37,15 +37,51 @@ void flash() {
   delay(halfFreq);
 }
 
-
+int timer;
 int V; 
-String str;
+int A;
+int min = 0;
+int max = 1024;
+
+bool connected;
+char inBT;
+
+String str = "!";
+
 void loop() {
+  
+  
+  
   // Flash LED 
   flash();
+  
+  
+  //Read bluetooth for calibrate signal
+  inBT = '0';
+  inBT = bluetoothSerial.read()
+  if(inBT == '#'){
+    timer = 5000;
+  }
+  
+  //Calibration loop
+  while(timer > 0){
+    V = analogRead(SENSOR);
+    if(V < min){
+      min = V;
+    }
+    if(V > max){
+      max = V;
+    }
+    timer--;
+    delay(1);
+  }
+  
 
   // Read Sensor
   V = analogRead(SENSOR);
+  
+  //Convert to angle
+  
   str = String(V);
 
   bluetoothSerial.print(str);
