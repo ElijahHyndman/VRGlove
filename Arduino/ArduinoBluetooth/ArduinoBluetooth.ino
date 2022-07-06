@@ -43,7 +43,7 @@ int A;
 int min = 0;
 int max = 1024;
 
-bool connected;
+bool connected = false;
 char inBT;
 
 String str = "!";
