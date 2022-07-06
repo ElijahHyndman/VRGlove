@@ -50,7 +50,16 @@ String str = "!";
 
 void loop() {
   
-  
+  /*
+  while(!connected){
+    inBT = bluetoothSerial.read();
+    if(inBT == '!'){
+      connected = true;
+      bluetoothSerial.print(str);
+    }
+    
+  }
+  */
   
   // Flash LED 
   flash();
