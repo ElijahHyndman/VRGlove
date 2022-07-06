@@ -8,6 +8,12 @@ namespace HardwareConnection {
     // Establish connection to arduino based on operating system procedures.
     // Tries once, throws exception on failure.
     SerialPort connect();
+
+    // Property
+    bool Connected {
+      get;
+      set;
+    }
   }
 
   public class Connection {
@@ -21,8 +27,14 @@ namespace HardwareConnection {
     }
 
     private void connect() {
-      this._serialPort = connector.connect();
-      Console.WriteLine("Connected to " + _serialPort.PortName);
+      while (!connector.Connected) {
+        try {
+          this._serialPort = connector.connect();
+          Console.WriteLine("Connected to " + _serialPort.PortName);
+        } catch {
+          Console.WriteLine("Waiting for connection.");
+        }
+      }
     }
   }
 }
