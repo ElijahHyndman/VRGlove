@@ -10,7 +10,7 @@ public class MainClass {
     // con.connect();
     //
 
-    Connection con = new Connection( new MacOSConn(9600) );
+    Connection con = new Connection( new Connectors.MacOS(9600) , new SerialInterpreters.Null() );
 
     Console.WriteLine("End");
   }
