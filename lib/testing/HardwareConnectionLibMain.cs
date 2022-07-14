@@ -8,9 +8,12 @@ public class MainClass {
     Console.WriteLine("=======================================");
     // Connector con = new MacOSConn();
     // con.connect();
-    //
 
-    Connection con = new Connection( new Connectors.MacOS(9600) , new SerialInterpreters.Null() );
+    Connection con = new Connection( new Connectors.MacOS(9600) , new SerialInterpreters.DelimitedInts() );
+
+    while(true) {
+      con.GetValue();
+    }
 
     Console.WriteLine("End");
   }

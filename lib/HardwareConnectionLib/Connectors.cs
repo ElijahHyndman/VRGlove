@@ -6,7 +6,9 @@ using System.IO.Ports;
 // Implementations of Connector interface
 namespace Connectors {
 
-
+  /*
+      Mac OS implementation
+  */
   public class MacOS : HardwareConnection.Connector {
     private const string MAC_DEFAULT_USB_GLOB = "tty.usbserial-*";
     /*
@@ -35,7 +37,7 @@ namespace Connectors {
     /*
         Implementing connection behavior for Mac OS
     */
-    public SerialPort connect() {
+    public SerialPort Connect() {
       SerialPort _serialPort;
       string searchDirectoryPath = "/dev/";
 

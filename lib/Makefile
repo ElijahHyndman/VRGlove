@@ -22,6 +22,7 @@ run% : NAME = $(subst run,,$@)#Remove "run" from name
 run% : LIBRARY_FILE = $(NAME)Lib/$(NAME).dll# dll file location
 run% : MAIN_FILE = testing/$(NAME)LibMain# location without .cs or .exe extension
 run% :
+	@clear
 	@echo "Compiling==================================="
 	mcs -t:library -out:$(LIBRARY_FILE) $(NAME)Lib/*.cs
 	@# Compile {NAME}LibMain.cs file inside testing folder using {Name}Lib folder's .dll

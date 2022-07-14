@@ -11,7 +11,7 @@ namespace HardwareConnection {
   public interface Connector {
     // Establish connection to arduino based on operating system procedures.
     // Tries once, throws exception on failure.
-    SerialPort connect();
+    SerialPort Connect();
 
     // Property
     bool Connected {
@@ -27,7 +27,7 @@ namespace HardwareConnection {
   //
   public interface SerialInterpreter {
     // For this given SerialInterpreter type/format interpretation, interpret the Serial Connection's string into useful values
-    float valueFrom(string serialString);
+    int ValueFrom(string serialString);
   }
 
   //
@@ -44,14 +44,14 @@ namespace HardwareConnection {
       this.connector = connector;
       this.interpreter = interpreter;
       this._serialPort = null;
-      connect();
+      Connect();
     }
 
-    private void connect() {
+    private void Connect() {
       // repeatedly attempt to create connection
       while (!connector.Connected) {
         try {
-          this._serialPort = connector.connect();
+          this._serialPort = connector.Connect();
           Console.WriteLine("Connected to " + _serialPort.PortName);
         } catch {
           // Continue until connection made
@@ -60,17 +60,18 @@ namespace HardwareConnection {
       }
     }
 
-    public float getValue() {
+    public float GetValue() {
       try {
         // Assuming connection exists
         String serialString = _serialPort.ReadExisting();
-        float value = interpreter.valueFrom(serialString);
+        int value = interpreter.ValueFrom(serialString);
+        Console.WriteLine("input: " + value);
         return value;
       } catch {
         // If not, wait to connect.
         // recurse
-        connect();
-        return this.getValue();
+        Connect();
+        return this.GetValue();
       }
     }
   }
