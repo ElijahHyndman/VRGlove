@@ -4,12 +4,14 @@ using System.IO;
 using System.IO.Ports;
 
 // Implementations of Connector interface
-namespace Connectors {
+namespace Connectors
+{
 
   /*
       Mac OS implementation
   */
-  public class MacOS : HardwareConnection.Connector {
+  public class MacOS : HardwareConnection.Connector
+  {
     private const string MAC_DEFAULT_USB_GLOB = "tty.usbserial-*";
     /*
         Variables
@@ -23,12 +25,14 @@ namespace Connectors {
         Public Property - Connected
         Whether connection has been made
     */
-    public bool Connected {
+    public bool Connected
+    {
       get { return _connected; }
       set { /*do nothing*/ }
     }
 
-    public MacOS(int baudRate, string USBGlob=MAC_DEFAULT_USB_GLOB) {
+    public MacOS(int baudRate, string USBGlob=MAC_DEFAULT_USB_GLOB)
+    {
       this.baudRate = baudRate;
       this.USBGlob = USBGlob;
       this._connected = false;
@@ -37,18 +41,21 @@ namespace Connectors {
     /*
         Implementing connection behavior for Mac OS
     */
-    public SerialPort Connect() {
+    public SerialPort Connect()
+    {
       SerialPort _serialPort;
       string searchDirectoryPath = "/dev/";
 
       // Get all current USB devices
       string[] currentConnectedDevices = Directory.GetFiles(searchDirectoryPath, USBGlob); // Search for USB
-      foreach(string devicePath in currentConnectedDevices ) {
+      foreach(string devicePath in currentConnectedDevices )
+      {
           Console.WriteLine(devicePath);
           SerialPort _sp = new SerialPort(devicePath, this.baudRate);
 
           // Try to connect to each device
-          try {
+          try
+          {
             _sp.Open();
             _sp.ReadTimeout = 100;
 
@@ -66,7 +73,8 @@ namespace Connectors {
             }
 
           // Move on if failed
-          } catch { }
+          } catch
+          { }
       }
 
       // No Device Found

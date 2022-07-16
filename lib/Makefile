@@ -1,5 +1,5 @@
 all:
-	runHardwareConnection
+	mcs -t:library -out:VRGlove.dll *.cs
 
 # Compiling C# Libraries
 # C# lib files located in folder named {NAME}Lib
@@ -19,12 +19,12 @@ all:
 
 # Variables
 run% : NAME = $(subst run,,$@)#Remove "run" from name
-run% : LIBRARY_FILE = $(NAME)Lib/$(NAME).dll# dll file location
+run% : LIBRARY_FILE = $(NAME).dll# dll file location
 run% : MAIN_FILE = testing/$(NAME)LibMain# location without .cs or .exe extension
 run% :
 	@clear
 	@echo "Compiling==================================="
-	mcs -t:library -out:$(LIBRARY_FILE) $(NAME)Lib/*.cs
+	mcs -t:library -out:$(LIBRARY_FILE) *.cs
 	@# Compile {NAME}LibMain.cs file inside testing folder using {Name}Lib folder's .dll
 	mcs -r:$(LIBRARY_FILE) $(MAIN_FILE).cs
 	@# Move required .dll to execution folder
