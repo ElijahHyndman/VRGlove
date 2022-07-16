@@ -4,8 +4,8 @@ all:
 # Compiling C# Libraries
 # C# lib files located in folder named {NAME}Lib
 # Creates .dll
-%Lib : FORCE
-	mcs -t:library $@/*.cs
+# %Lib : FORCE
+# 	mcs -t:library $@/*.cs
 
 # Running Main Files
 # See:
@@ -19,7 +19,7 @@ all:
 
 # Variables
 run% : NAME = $(subst run,,$@)#Remove "run" from name
-run% : LIBRARY_FILE = $(NAME).dll# dll file location
+run% : LIBRARY_FILE = VRGlove.dll# dll file location
 run% : MAIN_FILE = testing/$(NAME)LibMain# location without .cs or .exe extension
 run% :
 	@clear
@@ -28,7 +28,7 @@ run% :
 	@# Compile {NAME}LibMain.cs file inside testing folder using {Name}Lib folder's .dll
 	mcs -r:$(LIBRARY_FILE) $(MAIN_FILE).cs
 	@# Move required .dll to execution folder
-	cp $(LIBRARY_FILE) testing/$(NAME).dll
+	cp $(LIBRARY_FILE) testing/$(LIBRARY_FILE)
 	@# Run {NAME}LibMain.exe
 	mono $(MAIN_FILE).exe
 
