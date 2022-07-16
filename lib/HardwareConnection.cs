@@ -4,11 +4,9 @@ using System.IO.Ports;
 namespace HardwareConnection
 {
 
-  //
-  //
-  // Interface
-  //
-  //
+  /*
+        Connector Behavior
+  */
   public interface Connector
   {
     // Establish connection to arduino based on operating system procedures.
@@ -21,28 +19,28 @@ namespace HardwareConnection
       get;
       set;
     }
+
   }
 
-  //
-  //
-  //
-  //
-  //
+  /*
+      SerialInterpreter Behavior
+  */
   public interface SerialInterpreter
   {
     // For this given SerialInterpreter type/format interpretation, interpret the Serial Connection's string into useful values
     int ValueFrom(string serialString);
   }
 
-  //
-  //
-  //
-  //
-  //
+  /*
+      HardwareConnection Entity
+  */
   public class Connection
   {
+
     private Connector connector;
+
     private SerialInterpreter interpreter;
+
     private SerialPort _serialPort;
 
     public Connection(Connector connector, SerialInterpreter interpreter)
@@ -77,7 +75,7 @@ namespace HardwareConnection
         // Assuming connection exists
         String serialString = _serialPort.ReadExisting();
         int value = interpreter.ValueFrom(serialString);
-        Console.WriteLine("input: " + value);
+        // Console.WriteLine("input: " + value);
         return value;
       } catch
       {
