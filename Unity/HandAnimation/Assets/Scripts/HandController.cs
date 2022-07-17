@@ -20,7 +20,8 @@ public class HandController : MonoBehaviour
 
 
     /*
-        Create VRGlove and establis connection
+        Create VRGlove and establish connection
+        - pattern specifies the order in which joint values are presented in the hardware input string from arduino
 
         Tie our custom GloveObserver to use values from glove
     */

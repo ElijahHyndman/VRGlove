@@ -14,13 +14,6 @@ namespace HardwareConnection
     // Establish connection to arduino based on operating system procedures.
     // Tries once, throws exception on failure.
     SerialPort Connect();
-
-    // Property
-    bool Connected
-    {
-      get;
-      set;
-    }
   }
 
 
@@ -57,12 +50,13 @@ namespace HardwareConnection
     private void Connect()
     {
       // repeatedly attempt to create connection
-      while (!connector.Connected)
+      while (true)
       {
         try
         {
           this._serialPort = connector.Connect();
           Console.WriteLine("Connected to " + _serialPort.PortName);
+          return;
         } catch
         {
           /*
@@ -72,19 +66,51 @@ namespace HardwareConnection
       }
     }
 
+    /*
+        Fetch list of integer values from hardware connection.
+        Attempt to establish connection again if connection severed.
+    */
     public int[] GetValues()
     {
-      try
+      // Infinite loop with only one exit condition
+      // Allows waiting for reconnection without recursion (creates buffer overflow)
+      while(true)
       {
-        // Assuming connection exists
-        String serialInput = _serialPort.ReadExisting();
-        // Console.WriteLine(serialInput);
-        return interpreter.ValuesFrom(serialInput);
-      } catch
-      {
-        // If not, wait however long to connect. then recurse
-        this.Connect();
-        return this.GetValues();
+        try
+        {
+          // Assuming connection exists
+          bool bufferFilled = _serialPort.BytesToRead>0;
+          if(bufferFilled)
+          {
+            String serialInput = _serialPort.ReadExisting();
+            return interpreter.ValuesFrom(serialInput);
+            // EXIT
+          }
+        }
+        catch (FormatException e)
+        {
+          // SerialBuffer overfilled or underfilled with values
+          // CONTINUE
+        }
+        catch (TimeoutException e)
+        {
+          // Hardware Disconnected
+          // Wait for reconnection
+          this.Connect();
+          // CONTINUE
+        }
+        catch (System.IO.IOException e)
+        {
+          // Failure during SerialPort.ReadExisting (disconnected)
+          // Wait for reconnection
+          this.Connect();
+          // CONTINUE
+        }
+        catch (Exception e)
+        {
+          Console.WriteLine(e.ToString());
+          // CONTINUE
+        }
       }
     }
   }

@@ -49,6 +49,6 @@ void loop() {
   Serial.print( V1);
   Serial.print(".");
   Serial.print( V2 );
-//  Serial.print("\n");
+  Serial.print("\n");
   Serial.flush();
 }

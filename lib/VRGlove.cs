@@ -136,11 +136,16 @@ namespace VRGlove
       {
         // Get new values
         int[] jointValues = Hardware.GetValues();
+
+
         int size = jointValues.Length;
         for(int idx=0; idx<size; idx++)
         {
-          int joint = this.JointPattern[idx];
-          this._Joints[ joint ] = jointValues[idx];
+          // Find what joint this index corresponds to
+          int correspondingJoint = this.JointPattern[idx];
+
+          // Update its value
+          this._Joints[ correspondingJoint ] = jointValues[idx];
         }
 
         // Notify Observers
@@ -157,6 +162,12 @@ namespace VRGlove
           Skip these values.
         */
         Console.WriteLine("Index out of range avoided");
+      }
+      catch
+      {
+        /*
+          Failures may arise when picking up values.
+        */
       }
     }
 

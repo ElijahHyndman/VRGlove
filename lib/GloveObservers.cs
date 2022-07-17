@@ -19,7 +19,7 @@ namespace GloveObservers
       //Console.WriteLine("Reading");
       foreach (int joint in _joints)
       {
-        //Console.WriteLine("--" + _Subject.Get(joint));
+        //Console.WriteLine("--" + VRGlove.Get(joint));
       }
     }
   }
