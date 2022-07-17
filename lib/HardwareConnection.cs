@@ -1,5 +1,6 @@
 using System;
 using System.IO.Ports;
+using VRGlove;
 
 namespace HardwareConnection
 {
@@ -28,7 +29,7 @@ namespace HardwareConnection
   public interface SerialInterpreter
   {
     // For this given SerialInterpreter type/format interpretation, interpret the Serial Connection's string into useful values
-    int ValueFrom(string serialString);
+    int[] ValuesFrom(string serialString);
   }
 
   /*
@@ -68,20 +69,19 @@ namespace HardwareConnection
       }
     }
 
-    public int GetValue()
+    public int[] GetValues()
     {
       try
       {
         // Assuming connection exists
-        String serialString = _serialPort.ReadExisting();
-        int value = interpreter.ValueFrom(serialString);
+        String serialInput = _serialPort.ReadExisting();
+        return interpreter.ValuesFrom(serialInput);
         // Console.WriteLine("input: " + value);
-        return value;
       } catch
       {
         // If not, wait however long to connect. then recurse
         this.Connect();
-        return this.GetValue();
+        return this.GetValues();
       }
     }
   }

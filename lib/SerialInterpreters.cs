@@ -1,5 +1,6 @@
 using HardwareConnection;
 using System;
+using VRGlove;
 
 // Implementations of SerialInterpreter interface
 namespace SerialInterpreters
@@ -10,18 +11,32 @@ namespace SerialInterpreters
   */
   public class Null : HardwareConnection.SerialInterpreter
   {
-    public int ValueFrom(string serialString)
+    public int[] ValuesFrom(string serialString)
     {
-      // do nothing
-      return 0;
+      // Set all joints to zero
+      return new int[] {0};
     }
   }
 
   public class DelimitedInts : HardwareConnection.SerialInterpreter
   {
-    public int ValueFrom(string serialString)
+    private string delimiter;
+
+    public DelimitedInts(string delimiter = ".")
     {
-      return System.Convert.ToInt32(serialString);
+      this.delimiter = delimiter;
+    }
+
+    public int[] ValuesFrom(string serialString)
+    {
+      string[] tokens = serialString.Split(this.delimiter);
+      int size = tokens.Length;
+      int[] values = new int[size];
+      for (int idx = 0; idx < size; idx ++)
+      {
+        values[idx] = System.Convert.ToInt32( tokens[idx] );
+      }
+      return values;
     }
   }
 }
