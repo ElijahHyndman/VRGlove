@@ -12,7 +12,7 @@ public class MainClass {
     Connection con = new Connection( new Connectors.MacOS(9600) , new SerialInterpreters.DelimitedInts() );
 
     while(true) {
-      con.GetValue();
+      con.GetValues();
     }
 
     Console.WriteLine("End");

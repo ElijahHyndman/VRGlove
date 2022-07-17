@@ -5,6 +5,7 @@ using VRGlove;
 namespace HardwareConnection
 {
 
+
   /*
         Connector Behavior
   */
@@ -20,8 +21,8 @@ namespace HardwareConnection
       get;
       set;
     }
-
   }
+
 
   /*
       SerialInterpreter Behavior
@@ -31,6 +32,7 @@ namespace HardwareConnection
     // For this given SerialInterpreter type/format interpretation, interpret the Serial Connection's string into useful values
     int[] ValuesFrom(string serialString);
   }
+
 
   /*
       HardwareConnection Entity
@@ -63,8 +65,9 @@ namespace HardwareConnection
           Console.WriteLine("Connected to " + _serialPort.PortName);
         } catch
         {
-          // Continue until connection made
-          //Console.WriteLine("Waiting for connection.");
+          /*
+            Continue until connection made
+          */
         }
       }
     }
@@ -75,8 +78,8 @@ namespace HardwareConnection
       {
         // Assuming connection exists
         String serialInput = _serialPort.ReadExisting();
+        // Console.WriteLine(serialInput);
         return interpreter.ValuesFrom(serialInput);
-        // Console.WriteLine("input: " + value);
       } catch
       {
         // If not, wait however long to connect. then recurse

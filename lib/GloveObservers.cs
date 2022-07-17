@@ -4,15 +4,23 @@ using System;
 
 namespace GloveObservers
 {
+  /*
+      Debug implementation
+      Lists the value of desired joints to the console upon every update notification.
+  */
   public class Debugger : VRGlove.GloveObserver
   {
-    private int _joint;
-    public Debugger(int joint) {
-      _joint = joint;
+    private int[] _joints;
+    public Debugger(int[] desiredJoints) {
+      _joints = desiredJoints;
     }
-    public override void Update()
+    public override void Notify()
     {
-      Console.WriteLine("Custom Usage: " + _Subject.get(_joint));
+      //Console.WriteLine("Reading");
+      foreach (int joint in _joints)
+      {
+        //Console.WriteLine("--" + _Subject.Get(joint));
+      }
     }
   }
 }

@@ -1,48 +1,57 @@
 using HardwareConnection;
 using System.Collections.Generic;
+using System;
 
 namespace VRGlove
 {
 
   /*
-
+      Observer Contract
+      Subject-Observer design pattern.
+      Allows multiple outputs and interpretations to exist for a single glove entity.
   */
   public abstract class GloveObserver
   {
-    protected Glove _Subject;
-    public Glove Subject
+    protected Glove _VRGlove;
+    public Glove VRGlove
     {
-      get => _Subject;
+      get => _VRGlove;
       set
       {
-        this._Subject=value;
+        this._VRGlove=value;
       }
     }
 
     // Contract for GloveObserver behavior
-    abstract public void Update();
+    abstract public void Notify();
 
   }
 
   /*
-
+      Constants
+      Treated like enums, independent of underlying datastructure.
+      May change the datatype in the future.
   */
   public class JOINT {
-    public static int I1 = 0; // Index1
-    public static int I2 = 1; // ifndex2
-    public static int I3 = 2; // Index2
-    public static int IM = 3; // IndexMiddle
-    public static int M1 = 4; // Middle1
-    public static int M2 = 5; // Middle2
-    public static int M3 = 6; // Middle3
-    public static int MR = 7; // MiddleRing
-    public static int R1 = 8; // Ring1
-    public static int R2 = 9; // Ring2
-    public static int R3 = 10; // Ring3
-    public static int RP = 11; // RingPinky
-    public static int P1 = 12; // Pinky1
-    public static int P2 = 13; // Pinky2
-    public static int P3 = 14; // Pinky3
+    public static int T1 = 0; // Thumb1
+    public static int T2 = 1; // Thumb2
+    public static int T3 = 2; // Thumb3
+    public static int TI = 3; // ThumbIndex
+    public static int I1 = 4; // Index1
+    public static int I2 = 5; // ifndex2
+    public static int I3 = 6; // Index2
+    public static int IM = 7; // IndexMiddle
+    public static int M1 = 8; // Middle1
+    public static int M2 = 9; // Middle2
+    public static int M3 = 10; // Middle3
+    public static int MR = 11; // MiddleRing
+    public static int R1 = 12; // Ring1
+    public static int R2 = 13; // Ring2
+    public static int R3 = 14; // Ring3
+    public static int RP = 15; // RingPinky
+    public static int P1 = 16; // Pinky1
+    public static int P2 = 17; // Pinky2
+    public static int P3 = 18; // Pinky3
   }
 
   /*
@@ -59,8 +68,10 @@ namespace VRGlove
 
     private List<GloveObserver> Observers;
 
-    private int[] Pattern;
+    // The pattern in which joints will be interpreted in the SerialInput string from arduino
+    private int[] JointPattern;
 
+    // All joints will have a value, even if they do not have a corresponding sensor
     private Dictionary<int, int> _Joints = new Dictionary<int,int>() {
       {JOINT.I1, 0},
       {JOINT.I2, 0},
@@ -82,33 +93,47 @@ namespace VRGlove
     public Glove(Connection hardwareConnection, int[] pattern )
     {
       this.Hardware = hardwareConnection;
-      this.Pattern = pattern;
+      this.JointPattern = pattern;
       Observers = new List<GloveObserver>();
     }
 
     public void RegisterObserver(GloveObserver o)
     {
-      o.Subject = this;
+      o.VRGlove = this;
       Observers.Add(o);
     }
 
     public void Update()
     {
-      int[] jointValues = Hardware.GetValues();
-      int size = jointValues.Length;
-      for(int idx=0; idx<size; idx++)
+      try
       {
-        int joint = this.Pattern[idx];
-        this._Joints[ joint ] = jointValues[idx];
-      }
+        // Get new values
+        int[] jointValues = Hardware.GetValues();
+        int size = jointValues.Length;
+        for(int idx=0; idx<size; idx++)
+        {
+          int joint = this.JointPattern[idx];
+          this._Joints[ joint ] = jointValues[idx];
+        }
 
-      foreach (GloveObserver o in Observers)
+        // Notify Observers
+        foreach (GloveObserver o in Observers)
+        {
+          o.Notify();
+        }
+      }
+      catch (IndexOutOfRangeException e)
       {
-        o.Update();
+        /*
+          Arduino will continually write to serial buffer while in idle despite not being connected to program.
+          Serial buffer may begin with a few hundred characters in it, exceeding the expected amount.
+          Skip these values.
+        */
+        Console.WriteLine("Index out of range avoided");
       }
     }
 
-    public int get(int joint)
+    public int Get(int joint)
     {
       return _Joints[joint];
     }
