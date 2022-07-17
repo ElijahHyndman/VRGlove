@@ -1,15 +1,16 @@
 
 // Pin Numbers 
 // from https://forum.arduino.cc/t/trying-to-identify-pins-arduino-nano-3-0/497650
-int LED = 2;    // D02 
-int SENSOR = A0;// A00 
+int LED = 4;    // D02 
+int SENSOR1 = A0;// A00 
+int SENSOR2 = A1;
 
 // Communication
 int baud_rate = 9600;
 int bitWidth = 12; // bits, number of bits for number formatting to Serial Port
 
 // Other
-int halfFreq = 100; // half of the total period in which the LED is on 
+int halfFreq = 20; // half of the total period in which the LED is on 
 
 void setup() {
   // put your setup code here, to run once:
@@ -34,19 +35,20 @@ void flash() {
 //}
 
 
-int V; 
+int V1, V2; 
 String message;
 void loop() {
   // Flash LED 
   flash();
 
   // Read Sensor
-  V = analogRead(SENSOR);
+  V1 = analogRead(SENSOR1);
+  V2 = analogRead(SENSOR2);
 
   // Print to USB
-  Serial.print( V );
+  Serial.print( V1);
+  Serial.print(".");
+  Serial.print( V2 );
 //  Serial.print("\n");
   Serial.flush();
-
-  //delay(200);
 }
