@@ -52,7 +52,30 @@ namespace VRGlove
     public static int P1 = 16; // Pinky1
     public static int P2 = 17; // Pinky2
     public static int P3 = 18; // Pinky3
-  }
+
+    public static Dictionary<int, string> Names = new Dictionary<int, string>() {
+        {JOINT.T1, "T1"},
+        {JOINT.T2, "T2"},
+        {JOINT.T3, "T3"},
+        {JOINT.TI, "TI"},
+        {JOINT.I1, "I1"},
+        {JOINT.I2, "I2"},
+        {JOINT.I3, "I3"},
+        {JOINT.IM, "IM"},
+        {JOINT.M1, "M1"},
+        {JOINT.M2, "M2"},
+        {JOINT.M3, "M3"},
+        {JOINT.MR, "MR"},
+        {JOINT.R1, "R1"},
+        {JOINT.R2, "R2"},
+        {JOINT.R3, "R3"},
+        {JOINT.RP, "RP"},
+        {JOINT.P1, "P1"},
+        {JOINT.P2, "P2"},
+        {JOINT.P3, "P3"},
+      };
+  };
+
 
   /*
       VR Glove
