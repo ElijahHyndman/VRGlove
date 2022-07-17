@@ -10,9 +10,12 @@ using HardwareConnection;
 public class HandController : MonoBehaviour
 {
     public Hand targetHand;
-    float flex, grip;
+    float A, B;
     Glove glove;
     Flexer o;
+
+    static int JointA = JOINT.I1;
+    static int JointB = JOINT.M1;
 
 
 
@@ -22,7 +25,7 @@ public class HandController : MonoBehaviour
       Connection HW = new Connection(       connector : new Connectors.MacOS(9600),
                                         interpreter : new SerialInterpreters.DelimitedInts() );
       o = new Flexer();
-      int[] pattern = new int[] {JOINT.I1, JOINT.IM};
+      int[] pattern = new int[] {JointA, JointB};
 
       glove = new Glove( hardwareConnection : HW, pattern : pattern );
       glove.RegisterObserver( o );
@@ -32,12 +35,16 @@ public class HandController : MonoBehaviour
     void Update()
     {
       glove.Update();
-      grip = o.val1;
-      flex = o.val2;
-      targetHand.SetGrip(grip);
-      targetHand.SetFlexion(flex);
+      A = o.val1;
+      B = o.val2;
+      targetHand.SetJoint(JointA, A);
+      targetHand.SetJoint(JointB, B);
     }
 
+
+    /*
+      Optional keyboard inputs to avoid arduino sensors
+    */
     private float GetFlex() {
       if(Input.GetKey("a")) {
         return 1.0f;
@@ -71,8 +78,8 @@ public class HandController : MonoBehaviour
       }
 
       public override void Notify() {
-        _val1 = (float)VRGlove.Get(JOINT.I1);
-        _val2 = (float)VRGlove.Get(JOINT.IM);
+        _val1 = (float)VRGlove.Get(JointA);
+        _val2 = (float)VRGlove.Get(JointB);
 
         if(_val1>max1) max1 = _val1;
         if(_val2>max2) max2 = _val2;

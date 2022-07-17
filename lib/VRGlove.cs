@@ -73,6 +73,10 @@ namespace VRGlove
 
     // All joints will have a value, even if they do not have a corresponding sensor
     private Dictionary<int, int> _Joints = new Dictionary<int,int>() {
+      {JOINT.T1, 0},
+      {JOINT.T2, 0},
+      {JOINT.T3, 0},
+      {JOINT.TI, 0},
       {JOINT.I1, 0},
       {JOINT.I2, 0},
       {JOINT.I3, 0},
