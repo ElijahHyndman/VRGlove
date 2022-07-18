@@ -16,10 +16,10 @@ namespace GloveObservers
     }
     public override void Notify()
     {
-      //Console.WriteLine("Reading");
+      Console.WriteLine("Reading");
       foreach (int joint in _joints)
       {
-        //Console.WriteLine("--" + VRGlove.Get(joint));
+        Console.WriteLine("--" + VRGlove.Get(joint));
       }
     }
   }

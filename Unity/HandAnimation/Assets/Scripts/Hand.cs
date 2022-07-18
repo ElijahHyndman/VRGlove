@@ -7,7 +7,7 @@ using VRGlove;
 public class Hand : MonoBehaviour
 {
     public float speed;
-    
+
     Animator animator;
 
     private const int nJoints = 19;

@@ -44,7 +44,7 @@ namespace HardwareConnection
       this.connector = connector;
       this.interpreter = interpreter;
       this._serialPort = null;
-      Connect();
+      //Connect();
     }
 
     private void Connect()
@@ -108,6 +108,7 @@ namespace HardwareConnection
         }
         catch (Exception e)
         {
+          this.Connect();
           Console.WriteLine(e.ToString());
           // CONTINUE
         }
