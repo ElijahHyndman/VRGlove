@@ -4,7 +4,7 @@
 int LED = 4;    // D02 
 int SENSOR1 = A0;// A00 
 int SENSOR2 = A1;
-
+int SENSOR3 = A2;
 // Communication
 int baud_rate = 9600;
 int bitWidth = 12; // bits, number of bits for number formatting to Serial Port
@@ -35,7 +35,8 @@ void flash() {
 //}
 
 
-int V1, V2; 
+int V1, V2, V3; 
+int A_1, A_2, A_3;
 String message;
 void loop() {
   // Flash LED 
@@ -44,11 +45,18 @@ void loop() {
   // Read Sensor
   V1 = analogRead(SENSOR1);
   V2 = analogRead(SENSOR2);
+  V3 = analogRead(SENSOR3);
 
+  //Convert to Angle
+  A_1 = log((double)V1 / 810.54) / (-.027);
+  A_2 = log((double)V2 / 810.54) / (-.027);
+  A_3 = log((double)V3 / 810.54) / (-.027);
   // Print to USB
-  Serial.print( V1);
+  Serial.print( A_1);
   Serial.print(".");
-  Serial.print( V2 );
+  Serial.print( A_2 );
+  Serial.print(".");
+  Serial.print( A_3 );
   Serial.print("\n");
   Serial.flush();
 }

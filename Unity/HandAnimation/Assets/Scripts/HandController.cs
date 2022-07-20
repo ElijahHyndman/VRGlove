@@ -13,7 +13,7 @@ public class HandController : MonoBehaviour
 
     void Start()
     {
-      controllerInput = new KeyboardInputSource();
+      controllerInput = new ArduinoInputSource();
     }
 
 
