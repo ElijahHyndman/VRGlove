@@ -8,11 +8,13 @@ int LED = 4;    // D04
 int SENSOR = A0;// A00 
 
 // Communication
-int baud_rate = 9600;
 // number of bits for number formatting to Serial Port
+int baud_rate = 9600;
 int bitWidth = 12; // bits
-int txd = 3; // D02
-int rxd = 2; // D03
+
+
+int txd = 3; // D03
+int rxd = 2; // D02
 
 // Other
 // half of the total period in which the LED is on 
@@ -24,6 +26,8 @@ void setup() {
   // put your setup code here, to run once:
   Serial.begin(baud_rate);
   pinMode(LED, OUTPUT);
+
+  
   bluetoothSerial.begin(baud_rate);
 }
 
@@ -37,6 +41,9 @@ void flash() {
   delay(halfFreq);
 }
 
+
+
+
 int timer;
 int V; 
 int A;
@@ -49,17 +56,6 @@ char inBT;
 String str = "!";
 
 void loop() {
-  
-  /*
-  while(!connected){
-    inBT = bluetoothSerial.read();
-    if(inBT == '!'){
-      connected = true;
-      bluetoothSerial.print(str);
-    }
-    
-  }
-  */
   
   // Flash LED 
   flash();
