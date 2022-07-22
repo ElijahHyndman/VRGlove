@@ -45,7 +45,7 @@ namespace Connectors
           try
           {
             _sp.Open();
-            _sp.ReadTimeout = 100;
+            //_sp.ReadTimeout = 100;
 
             bool isConnection = _sp.IsOpen;
             if( isConnection ) {

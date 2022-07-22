@@ -9,6 +9,7 @@ public class HandController : MonoBehaviour
 {
     public Hand targetHand;
 
+
     public InputSource controllerInput;
 
     void Start()

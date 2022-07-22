@@ -6,7 +6,7 @@ using VRGlove;
 using HardwareConnection;
 
 /*
-    Abstract form of input source which affects hand model 
+    Abstract form of input source which affects hand model
 */
 public interface InputSource
 {

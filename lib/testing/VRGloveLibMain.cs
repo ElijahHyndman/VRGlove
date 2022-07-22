@@ -4,7 +4,7 @@ using HardwareConnection;
 
 public class MainClass {
   public static void Main(string[] args) {
-    int[] pattern = new int[] {JOINT.I1, JOINT.IM};
+    int[] pattern = new int[] {JOINT.I1, JOINT.I2, JOINT.IM};
     Connection HW = new Connection(       connector : new Connectors.MacOS(9600),
                                           interpreter : new SerialInterpreters.DelimitedInts() );
 

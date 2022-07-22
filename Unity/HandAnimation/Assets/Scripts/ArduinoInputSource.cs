@@ -12,16 +12,16 @@ public class ArduinoInputSource : VRGlove.GloveObserver, InputSource
 {
     Glove glove;
 
-    static int _JointA = JOINT.I2;
-    static int _JointB = JOINT.IM;
+    static int _JointA = JOINT.IM;
+    static int _JointB = JOINT.I2;
     static int _JointC = JOINT.I1;
 
     private float _val1=0.0f;
     private float _val2=0.0f;
     private float _val3=0.0f;
-    private float max1=0.0001f;
-    private float max2=0.0001f;
-    private float max3=0.0001f;
+    private float max1=30.0f;
+    private float max2=30.0f;
+    private float max3=30.0f;
 
     /*
         Create and connect to VRGlove controller
@@ -45,14 +45,16 @@ public class ArduinoInputSource : VRGlove.GloveObserver, InputSource
       _val1 = (float)VRGlove.Get(_JointA);
       _val2 = (float)VRGlove.Get(_JointB);
       _val3 = (float)VRGlove.Get(_JointC);
-      // if(_val1>max1) max1 = _val1;
-      // if(_val2>max2) max2 = _val2;
+      if(_val1>max1) max1 = _val1;
+      if(_val2>max2) max2 = _val2;
+      if(_val3>max3) max3 = _val3;
 
-      //_val1 =  _val1 / max1;
-      //_val2 =  _val2 / max2;
-      _val1 =  _val1 / 100.0f;
-      _val2 =  _val2 / 100.0f;
-      _val3 =  _val3 / 100.0f;
+      _val1 =  _val1 / max1;
+      _val2 =  _val2 / max2;
+      _val3 =  _val3 / max3;
+      // _val1 =  _val1 / 100.0f;
+      // _val2 =  _val2 / 100.0f;
+      // _val3 =  _val3 / 100.0f;
     }
 
     // public void Update()

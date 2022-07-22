@@ -6,9 +6,11 @@ namespace VRGlove
 {
 
   /*
+      Allows multiple processes to interact with VRGlove object.
+
       Observer Contract
-      Subject-Observer design pattern.
-      Allows multiple outputs and interpretations to exist for a single glove entity.
+      (Subject-Observer design pattern)
+
   */
   public abstract class GloveObserver
   {
@@ -29,8 +31,6 @@ namespace VRGlove
 
   /*
       Constants
-      Treated like enums, independent of underlying datastructure.
-      May change the datatype in the future.
   */
   public class JOINT {
     public static int T1 = 0; // Thumb1
@@ -80,9 +80,10 @@ namespace VRGlove
   /*
       VR Glove
       Software manifestation of glove.
-      Glove has values for flexion of knuckles and joints.
-      Multiple observers will listen to a single VR Glove to interpret and use its values.
-      A VR Glove has a hardware manifestion which it derives its values from.
+
+      -Glove has values for flexion of knuckles and joints.
+      -Multiple observers will listen to a single VR Glove to use its values
+      -A VR Glove has a hardware manifestion where it pulls values from
   */
   public class Glove
   {
@@ -135,17 +136,19 @@ namespace VRGlove
       try
       {
         // Get new values
+        // Stalls if connection is severed
         int[] jointValues = Hardware.GetValues();
 
 
-        int size = jointValues.Length;
-        for(int idx=0; idx<size; idx++)
+        // Store values
+        int numJointsMeasured = jointValues.Length;
+        int correspondingJoint;
+        for(int idx=0; idx<numJointsMeasured; idx++)
         {
-          // Find what joint this index corresponds to
-          int correspondingJoint = this.JointPattern[idx];
-
+          // Find what joint this element is intended for
           // Update its value
-          this._Joints[ correspondingJoint ] = jointValues[idx];
+          correspondingJoint = this.JointPattern[idx];
+          _Joints[ correspondingJoint ] = jointValues[idx];
         }
 
         // Notify Observers
@@ -157,8 +160,11 @@ namespace VRGlove
       catch (IndexOutOfRangeException e)
       {
         /*
+          Possible buffer error
+
+
           Arduino will continually write to serial buffer while in idle despite not being connected to program.
-          Serial buffer may begin with a few hundred characters in it, exceeding the expected amount.
+          Serial buffer may initialize with a few hundred characters in it, exceeding the expected amount.
           Skip these values.
         */
         Console.WriteLine("Index out of range avoided");
