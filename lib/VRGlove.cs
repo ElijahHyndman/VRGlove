@@ -6,6 +6,9 @@ namespace VRGlove
 {
 
   /*
+      GloveObserver
+
+      Notified upon new values appearing on glove.
       Allows multiple processes to interact with VRGlove object.
 
       Observer Contract
@@ -29,8 +32,9 @@ namespace VRGlove
 
   }
 
+
   /*
-      Constants
+      Global Constants
   */
   public class JOINT {
     public static int T1 = 0; // Thumb1
@@ -52,6 +56,7 @@ namespace VRGlove
     public static int P1 = 16; // Pinky1
     public static int P2 = 17; // Pinky2
     public static int P3 = 18; // Pinky3
+    public static int NUMJOINT = 19;
 
     public static Dictionary<int, string> Names = new Dictionary<int, string>() {
         {JOINT.T1, "T1"},
@@ -81,7 +86,7 @@ namespace VRGlove
       VR Glove
       Software manifestation of glove.
 
-      -Glove has values for flexion of knuckles and joints.
+      -Glove has values representing flexion of knuckles and joints.
       -Multiple observers will listen to a single VR Glove to use its values
       -A VR Glove has a hardware manifestion where it pulls values from
   */
@@ -93,6 +98,9 @@ namespace VRGlove
     private List<GloveObserver> Observers;
 
     // The pattern in which joints will be interpreted in the SerialInput string from arduino
+    // for input 466.88.2
+    // {JOINT.T1, JOINT.T2, JOINT.T3} interprets values as flexions of the thumb
+    // {JOINT.IM, JOINT.I1, JOINT.I2} interprets values as flexion of the first two index finger joints and the Index->middle finger joint
     private int[] JointPattern;
 
     // All joints will have a value, even if they do not have a corresponding sensor
@@ -125,33 +133,47 @@ namespace VRGlove
       Observers = new List<GloveObserver>();
     }
 
+
+    public int Get(int joint)
+    {
+      return _Joints[joint];
+    }
+
+    /*
+        New Listener to add
+    */
     public void RegisterObserver(GloveObserver o)
     {
       o.VRGlove = this;
       Observers.Add(o);
     }
 
+
+    /*
+        Get values for joints.
+        If connection severed, wait for reconnection.
+    */
     public void Update()
     {
       try
       {
         // Get new values
         // Stalls if connection is severed
-        int[] jointValues = Hardware.GetValues();
+        int[] inputJointValues = Hardware.GetValues();
 
 
         // Store values
-        int numJointsMeasured = jointValues.Length;
-        int correspondingJoint;
-        for(int idx=0; idx<numJointsMeasured; idx++)
+        int nJointsMeasured = inputJointValues.Length;
+        int correspondingJointNumber;
+        for(int idx=0; idx<nJointsMeasured; idx++)
         {
-          // Find what joint this element is intended for
-          // Update its value
-          correspondingJoint = this.JointPattern[idx];
-          _Joints[ correspondingJoint ] = jointValues[idx];
+          // Use pattern to interpret
+          correspondingJointNumber = this.JointPattern[idx];
+          _Joints[ correspondingJointNumber ] = inputJointValues[idx];
         }
 
-        // Notify Observers
+        // Done Storing
+        // Notify observers of update
         foreach (GloveObserver o in Observers)
         {
           o.Notify();
@@ -161,7 +183,6 @@ namespace VRGlove
       {
         /*
           Possible buffer error
-
 
           Arduino will continually write to serial buffer while in idle despite not being connected to program.
           Serial buffer may initialize with a few hundred characters in it, exceeding the expected amount.
@@ -173,13 +194,9 @@ namespace VRGlove
       {
         /*
           Failures may arise when picking up values.
+          Ignore them, retry later.
         */
       }
-    }
-
-    public int Get(int joint)
-    {
-      return _Joints[joint];
     }
   }
 }

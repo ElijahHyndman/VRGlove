@@ -1,26 +1,19 @@
 using HardwareConnection;
 using VRGlove;
-using System;
 
 namespace GloveObservers
 {
   /*
-      Debug implementation
-      Lists the value of desired joints to the console upon every update notification.
+      Objects looking to be notified upon updates to the VRGlove to use its values
+      - place in this class
+      - implement VRGlove.GloveObserver interface behavior
   */
-  public class Debugger : VRGlove.GloveObserver
+
+  class NullObserver : GloveObserver
   {
-    private int[] _joints;
-    public Debugger(int[] desiredJoints) {
-      _joints = desiredJoints;
-    }
     public override void Notify()
     {
-      Console.WriteLine("Reading");
-      foreach (int joint in _joints)
-      {
-        Console.WriteLine("--" + VRGlove.Get(joint));
-      }
+      // do nothing
     }
   }
 }
