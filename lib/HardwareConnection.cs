@@ -9,20 +9,24 @@ namespace HardwareConnection
   /*
         Connector Behavior
 
-        Responsible for implementing behavior for finding SerialPort connection to arduino on some specific platform (Mac, Windows, others)
+        Finds a SerialPort object to the arduino.
+
+        Responsible for implementing behavior finding SerialPort connection to arduino on some specific platform (Mac, Windows, others)
+
         Connection is either found on first try or else exception is thrown.
         Repeated attempts to connect are handled by HardwareConnection Object.
   */
   public interface Connector
   {
-    // Establish connection to arduino based on operating system procedures.
-    // Tries once, throws exception on failure.
+    // Attempt connection once
     SerialPort Connect();
   }
 
 
   /*
       SerialInterpreter Behavior
+
+      Interprets serial-input string "int.int..." as values for VR Finger joints.
 
       Responsible for knowing format of string received from hardware.
       Interpret string as a list of values, parse them, and return them as int[] list.
@@ -36,6 +40,10 @@ namespace HardwareConnection
 
   /*
       HardwareConnection Entity
+
+      - Provides abstracted .getValues() method for software->hardware connection.
+      - Establishes connection and maintains connection.
+
 
       Responsible for abstracting away and keeping a connection consistent with Arduino Hardware.
       As connection is interrupted, process is halted until connection is resumed.
@@ -53,6 +61,7 @@ namespace HardwareConnection
 
     private SerialPort _serialPort;
 
+
     public Connection(Connector connector, SerialInterpreter interpreter)
     {
       this.connector = connector;
@@ -60,15 +69,15 @@ namespace HardwareConnection
       this._serialPort = null;
 
       stringAccumulator = new SerialStringAccumulator();
-      //Connect();
     }
+
 
     /*
         Continually attempt to create connection with arduino hardware.
     */
     private void Connect()
     {
-      // repeatedly attempt to create connection
+      // Infinite Loop
       while (true)
       {
         try
@@ -76,6 +85,10 @@ namespace HardwareConnection
           this._serialPort = connector.Connect();
           Console.WriteLine("Connected to " + _serialPort.PortName);
           return;
+          /*
+              SUCCESS
+              exit.
+          */
         } catch
         {
           /*
@@ -85,6 +98,7 @@ namespace HardwareConnection
       }
     }
 
+
     /*
         Fetch list of integer values from hardware connection.
         Attempt to establish connection again if connection severed. Halt processing until connection is resumed.
@@ -93,7 +107,7 @@ namespace HardwareConnection
     */
     public int[] GetValues()
     {
-      /* Infinite loop to continually attempt reconnection if communication is severed
+      /* Infinite loop to continually attempt reconnection
       */
       while(true)
       {
@@ -159,9 +173,33 @@ namespace HardwareConnection
     }
   }
 
+
   /*
-      If the computer reads from the buffer quicker than the arduino can write, then partial messages may be processed.
-      This object accumulates partial messages to allow only completed messages to be process.
+      Accumulates partial strings received over serial into full messages.
+      A full message will contain a newline character at the end.
+
+      When the arduino sends a [message] of ["144.76.908\n"]
+      If the computer polls the SerialPort quicker than the arduino can write, the computer may receive messages:
+      - ["144.7"]
+      - ["6.90"]
+      - ["8\n"]
+      which would be interpreted as values
+      - 144.7.0
+      - 6.90.0
+      - 8.0.0
+      respectively.
+
+      SerialStringAccumulator will .accumulate() strings (1) ["144.7"], (2) ["6.90"], and (3) ["8\n"]
+      After receiving (1) SerialStringAccumulator.getMessage() will return null
+      After receiving (2) SerialStringAccumulator.getMessage() will return null
+      After receiving (3) SerialStringAccumulator.getMessage() will return "144.76.908"
+
+      if SerialStringAccumulator .accumulate()s the messages ["144.76.908\n722.89.40\n45.8"]
+      - SerialStringAccumulator.getMessage() will return "144.76.908"
+      - the value "722.89.40" will be thrown out (not processed quickly enough, avoids creating a queue)
+      - further .accumulate()s will append onto ["45.8"]
+      if the next message .accumulate()ed is ["21.6\n"]
+      - .getMessage will then return "45.821.6"
   */
   public class SerialStringAccumulator
   {
@@ -170,21 +208,17 @@ namespace HardwareConnection
 
     char endOfMessageChar = '\n';
 
+    // Accumulate new partial string
     public void accumulate(string newReceivedInput)
     {
       receivedString = receivedString + newReceivedInput;
     }
 
 
-    private bool hasCompleteMessage()
-    {
-      return receivedString.Contains(endOfMessageChar);
-    }
-
-
+    // Return message if we have a completed message
     public string getMessage()
     {
-      if(hasCompleteMessage())
+      if(this.hasCompleteMessage())
       {
         string[] messages = receivedString.Split(endOfMessageChar);
         string completedMessage = messages[0];
@@ -200,5 +234,12 @@ namespace HardwareConnection
         return null;
       }
     }
+
+
+    private bool hasCompleteMessage()
+    {
+      return receivedString.Contains(endOfMessageChar);
+    }
+
   }
 }
