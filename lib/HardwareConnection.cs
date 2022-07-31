@@ -49,6 +49,8 @@ namespace HardwareConnection
 
     private SerialInterpreter interpreter;
 
+    private SerialStringAccumulator stringAccumulator;
+
     private SerialPort _serialPort;
 
     public Connection(Connector connector, SerialInterpreter interpreter)
@@ -56,6 +58,8 @@ namespace HardwareConnection
       this.connector = connector;
       this.interpreter = interpreter;
       this._serialPort = null;
+
+      stringAccumulator = new SerialStringAccumulator();
       //Connect();
     }
 
@@ -89,26 +93,35 @@ namespace HardwareConnection
     */
     public int[] GetValues()
     {
-      // Infinite loop with only one exit condition
-      // Allows waiting for reconnection without recursion (creates buffer overflow)
+      /* Infinite loop to continually attempt reconnection if communication is severed
+      */
       while(true)
       {
         try
         {
-          // Assuming connection exists
-          bool bufferFilled = _serialPort.BytesToRead>0;
-          if(bufferFilled)
+          // Read from Hardware Serial Connection (possibly a partial message)
+          // accumulate onto gathered messages
+          // If we received complete message, process it
+          String newSerialInput = _serialPort.ReadExisting();
+          stringAccumulator.accumulate(newSerialInput);
+          String message = stringAccumulator.getMessage();
+          if(message == null)
           {
-            Console.Write(_serialPort.BytesToRead + ":");
-            String serialInput = _serialPort.ReadExisting();
-            Console.WriteLine("["+serialInput+"]");
-            return interpreter.ValuesFrom(serialInput);
+            /*skip*/
+          }
+          else
+          {
+            return interpreter.ValuesFrom(message);
             /*
                 Success!
                 EXIT
             */
           }
         }
+
+        /* Many possible errors may arrive while in the infinite-loop.
+          Continually retry if error occurs.
+        */
         catch (FormatException e)
         {
           /*
@@ -142,6 +155,49 @@ namespace HardwareConnection
             CONTINUE
           */
         }
+      }
+    }
+  }
+
+  /*
+      If the computer reads from the buffer quicker than the arduino can write, then partial messages may be processed.
+      This object accumulates partial messages to allow only completed messages to be process.
+  */
+  public class SerialStringAccumulator
+  {
+
+    private string receivedString = "";
+
+    char endOfMessageChar = '\n';
+
+    public void accumulate(string newReceivedInput)
+    {
+      receivedString = receivedString + newReceivedInput;
+    }
+
+
+    private bool hasCompleteMessage()
+    {
+      return receivedString.Contains(endOfMessageChar);
+    }
+
+
+    public string getMessage()
+    {
+      if(hasCompleteMessage())
+      {
+        string[] messages = receivedString.Split(endOfMessageChar);
+        string completedMessage = messages[0];
+        string mostRecentMessage = messages[messages.Length - 1];
+        /*
+            If further, complete messages have been accumulated (i.e. indexes 2...infinity) exist, get rid of them.
+        */
+        receivedString = mostRecentMessage;
+        return completedMessage;
+      }
+      else
+      {
+        return null;
       }
     }
   }
