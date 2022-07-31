@@ -60,7 +60,7 @@ namespace HardwareConnection
     }
 
     /*
-        Continually attempt to create connection with arduino hardware. 
+        Continually attempt to create connection with arduino hardware.
     */
     private void Connect()
     {
@@ -99,7 +99,9 @@ namespace HardwareConnection
           bool bufferFilled = _serialPort.BytesToRead>0;
           if(bufferFilled)
           {
+            Console.Write(_serialPort.BytesToRead + ":");
             String serialInput = _serialPort.ReadExisting();
+            Console.WriteLine("["+serialInput+"]");
             return interpreter.ValuesFrom(serialInput);
             /*
                 Success!

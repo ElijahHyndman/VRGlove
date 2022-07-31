@@ -5,7 +5,7 @@ using HardwareConnection;
 public class MainClass {
   public static void Main(string[] args) {
     int[] pattern = new int[] {JOINT.I1, JOINT.I2, JOINT.IM};
-    Connection HW = new Connection(       connector : new Connectors.MacOS(9600),
+    Connection HW = new Connection(       connector : new Connectors.MacOS(9600), //USBGlob : "tty.DSDTECHHC-05"),
                                           interpreter : new SerialInterpreters.DelimitedInts() );
 
     Glove glove = new Glove( hardwareConnection : HW , pattern : pattern);

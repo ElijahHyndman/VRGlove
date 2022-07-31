@@ -21,11 +21,14 @@ public class Hand : MonoBehaviour
       animator = GetComponent<Animator>();
     }
 
+
     // Update is called once per frame
     void Update()
     {
       AnimateHand();
+      Debug.Log("I2: " + _JointTarget[JOINT.I2]);
     }
+
 
     /*
         Set target position-value for a joint.
@@ -33,6 +36,7 @@ public class Hand : MonoBehaviour
     internal void SetJoint(int joint, float val) {
       _JointTarget[joint] = val;
     }
+
 
     /*
         Go through all Joints.

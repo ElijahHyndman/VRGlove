@@ -1,16 +1,8 @@
-
-// Pin Numbers 
-// from https://forum.arduino.cc/t/trying-to-identify-pins-arduino-nano-3-0/497650
-int LED = 4;    // D02 
-int SENSOR1 = A0;// A00 
-int SENSOR2 = A1;
-int SENSOR3 = A2;
-// Communication
 int baud_rate = 9600;
-int bitWidth = 12; // bits, number of bits for number formatting to Serial Port
 
-// Other
 int halfFreq = 20; // half of the total period in which the LED is on 
+
+int LED = 4;    // D02 
 
 void setup() {
   // put your setup code here, to run once:
@@ -34,7 +26,9 @@ void flash() {
 //  return s;           
 //}
 
-
+int SENSOR1 = A0;// A00 
+int SENSOR2 = A1;
+int SENSOR3 = A2;
 int V1, V2, V3; 
 int A_1, A_2, A_3;
 String message;
@@ -48,15 +42,15 @@ void loop() {
   V3 = analogRead(SENSOR3);
 
   //Convert to Angle
-  A_1 = log((double)V1 / 810.54) / (-.027);
-  A_2 = log((double)V2 / 810.54) / (-.027);
-  A_3 = log((double)V3 / 810.54) / (-.027);
+//  A_1 = log((double)V1 / 810.54) / (-.027);
+//  A_2 = log((double)V2 / 810.54) / (-.027);
+//  A_3 = log((double)V3 / 810.54) / (-.027);
   // Print to USB
-  Serial.print( A_1);
+  Serial.print( String(V1) );
   Serial.print(".");
-  Serial.print( A_2 );
+  Serial.print( String(V2) );
   Serial.print(".");
-  Serial.print( A_3 );
+  Serial.print( String(V3) );
   Serial.print("\n");
   Serial.flush();
 }

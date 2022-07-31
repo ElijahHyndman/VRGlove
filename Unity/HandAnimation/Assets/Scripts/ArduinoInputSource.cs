@@ -28,7 +28,7 @@ public class ArduinoInputSource : VRGlove.GloveObserver, InputSource
     */
     public ArduinoInputSource()
     {
-      Connection HW = new Connection(       connector : new Connectors.MacOS(9600),
+      Connection HW = new Connection(       connector : new Connectors.MacOS(9600, USBGlob:"tty.DSDTECHHC-05"),
                                             interpreter : new SerialInterpreters.DelimitedInts() );
 
       int[] pattern = new int[] {_JointA, _JointB, _JointC};

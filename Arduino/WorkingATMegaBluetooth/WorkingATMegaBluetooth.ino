@@ -114,31 +114,89 @@ int readADC(int s3, int s2, int s1, int s0) {
 
 //unsigned char message[] = "Hello from arduino\n";
 String message = "Hello from arduino\n";
-int i;
-
-
+unsigned int i;
+unsigned int histLength = 50;
+unsigned int memIndex = 0;
 int main()
 {
-  int A0, A1, A2;
+  //Initialize Measurement Storage variables
+  unsigned int V[3];
+  unsigned int V_avg[3];
+  unsigned int V_Hist[3][histLength];
+  unsigned int A[3];
+  for(int m = 0; m < 3; m++){
+    for(int n = 0; n < histLength; n++){
+        V_Hist[m][n] = 0;
+      }
+      V[m] = 0;
+  }
+
   
   USART_Init();
   ADC_Init(); 
   
   while (1)
   {
-      // Get Message
-    A0 = readADC(0,0,0,0);
-    A1 = readADC(0,0,0,1);
-    A2 = readADC(0,0,1,0);
-        
-    message = (String(A2) + "." + String(A1) + "." + String(A0) + "\n\0"); 
+    //subtract old value
+    for(int m = 0; m < 3; m++){
+        V[m] -= V_Hist[m][memIndex];
+      }
+      //replace value in memory with new reading
+    V_Hist[0][memIndex] = readADC(0,0,0,0); //between
+    V_Hist[1][memIndex] = readADC(0,0,0,1); //joint
+    V_Hist[2][memIndex] = readADC(0,0,1,0); //knuckle
+
+    //Add new value
+    for(int m = 0; m < 3; m++){
+        V[m] += V_Hist[m][memIndex];
+        V_avg[m] = V[m] / histLength;
+      }
+
+
+    
+
+
+    A[2] = 133.04 - .31*V_avg[2];  //knuckle model
+    A[1] = 125.29 - .1883*V_avg[1]; //joint model
+
+    if(A[2] < 0 or A[2] > 65000){
+        A[2] = 0;
+    }else if(A[2] > 99){
+        A[2] = 99;
+    }
+    if(A[1] < 0 or A[1] > 65000){
+        A[1] = 0;
+    }else if(A[1] > 99){
+        A[1] = 99;
+    }
+
+    if(A[2] < 10 and A[1] < 10){
+      A[0] = -36.792 + .1265*V_avg[0]; //between model
+      }else{
+        A[0] = 15;
+      }
+    
+
+    
+
+    
+
+    
+    
+    message = (String(A[0]) + "." + String(A[1]) + "." + String(A[2]) + "\n\0"); 
 
     // Send Message
     i = 0;
     while(message[i] != '\0') {
       transmit(message[i++]);
     }
-    _delay_ms(100);
+    //_delay_ms(100);
+
+    memIndex++;
+    if(memIndex == histLength){
+      memIndex = 0;
+    }
   }
-  return 0;
-}
+    return 0;
+  }
+  
