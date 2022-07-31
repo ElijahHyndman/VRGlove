@@ -17,6 +17,7 @@
 #include <avr/io.h>      // Contains all the I/O Register Macros
 #include <util/delay.h>  // Generates a Blocking Delay
 
+//#define USART_BAUDRATE 9600 // Desired Baud Rate
 #define USART_BAUDRATE 9600 // Desired Baud Rate
 #define BAUD_PRESCALER (((F_CPU / (USART_BAUDRATE * 16UL))) - 1)
 
@@ -46,7 +47,13 @@
 #define input0 A5
 #define input1 A4
 
- 
+
+/*
+    Initializing Functions 
+
+    USART - for bluetooth 
+    ADC - for analog measurements
+*/
 void USART_Init()
 {
   // Set Baud Rate
@@ -76,6 +83,13 @@ void ADC_Init()
 }
 
 
+/*
+    Helper Functions 
+
+    transmit - sent one char across bluetooth USART
+    readADC - measure analog voltage (given binary for which analog input pin (select[3...0])) 
+*/
+
 void transmit(uint8_t DataByte)
 {
   while (( UCSR0A & (1<<UDRE0)) == 0) {}; // Do nothing until UDR is ready
@@ -95,10 +109,17 @@ int readADC(int s3, int s2, int s1, int s0) {
   ADMUX |= (s1 << MUX1);
   ADMUX |= (s0 << MUX0);
 
-  // Begin measurement, will automatically reset by hardware 
+  // Begin measurement by setting ADSC bit 
+  // Hardware automatically resets ADSC
   ADCSRA |= (1 << ADSC);
-
   bool waiting;
+  do 
+  {
+    waiting = (ADCSRA & (1 << ADSC));
+  } while(waiting);
+
+  // MEASURE TWICE to allow ADC value to catch up
+  ADCSRA |= (1 << ADSC);
   do 
   {
     waiting = (ADCSRA & (1 << ADSC));
@@ -112,18 +133,29 @@ int readADC(int s3, int s2, int s1, int s0) {
 }
 
 
+/*
+
+
+
+      Main Function 
+
+
+
+*/
 //unsigned char message[] = "Hello from arduino\n";
 String message = "Hello from arduino\n";
 unsigned int i;
-unsigned int histLength = 50;
+unsigned int histLength = 5; //Incease for more value smoothing, decrease for more responsiveness
 unsigned int memIndex = 0;
 int main()
 {
   //Initialize Measurement Storage variables
-  unsigned int V[3];
-  unsigned int V_avg[3];
-  unsigned int V_Hist[3][histLength];
-  unsigned int A[3];
+  unsigned int V[3];                    // running sum
+  unsigned int V_avg[3];                // average of values 
+  unsigned int V_Hist[3][histLength];   // most recently measured values 
+  unsigned int A[3];                    // Angle which will be returned 
+
+  // Initialize to zero 
   for(int m = 0; m < 3; m++){
     for(int n = 0; n < histLength; n++){
         V_Hist[m][n] = 0;
@@ -131,22 +163,26 @@ int main()
       V[m] = 0;
   }
 
-  
+  // Initialize hardware 
   USART_Init();
   ADC_Init(); 
   
   while (1)
   {
-    //subtract old value
+    
+    // Remove old value
     for(int m = 0; m < 3; m++){
         V[m] -= V_Hist[m][memIndex];
       }
-      //replace value in memory with new reading
+
+      
+      
+    // Get new analog measurements 
     V_Hist[0][memIndex] = readADC(0,0,0,0); //between
     V_Hist[1][memIndex] = readADC(0,0,0,1); //joint
     V_Hist[2][memIndex] = readADC(0,0,1,0); //knuckle
 
-    //Add new value
+    // Replace value in memory with new reading
     for(int m = 0; m < 3; m++){
         V[m] += V_Hist[m][memIndex];
         V_avg[m] = V[m] / histLength;
@@ -155,28 +191,33 @@ int main()
 
     
 
-
+    // Convert averages to angles 
     A[2] = 133.04 - .31*V_avg[2];  //knuckle model
     A[1] = 125.29 - .1883*V_avg[1]; //joint model
 
-    if(A[2] < 0 or A[2] > 65000){
+    if(A[2] < 0 or A[2] > 60000){
         A[2] = 0;
     }else if(A[2] > 99){
         A[2] = 99;
     }
-    if(A[1] < 0 or A[1] > 65000){
+    if(A[1] < 0 or A[1] > 60000){
         A[1] = 0;
     }else if(A[1] > 99){
         A[1] = 99;
     }
 
-    if(A[2] < 10 and A[1] < 10){
-      A[0] = -36.792 + .1265*V_avg[0]; //between model
-      }else{
-        A[0] = 15;
-      }
+//    if(A[2] < 10 and A[1] < 10){
+//      A[0] = -36.792 + .1265*V_avg[0]; //between model
+//      }else{
+//        A[0] = 15;
+//      }
+    A[0] = -36.792 + .1265*V_avg[0]; //between model
     
-
+    if(A[0] < 0 or A[0] > 60000){
+        A[0] = 0;
+    }else if(A[0] > 99){
+        A[0] = 99;
+      }
     
 
     

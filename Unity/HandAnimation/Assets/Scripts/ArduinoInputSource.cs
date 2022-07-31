@@ -52,7 +52,7 @@ public class ArduinoInputSource : VRGlove.GloveObserver, InputSource
       // _val1 =  _val1 / max1;
       // _val2 =  _val2 / max2;
       // _val3 =  _val3 / max3;
-      _val1 =  _val1 / 100.0f;
+      _val1 =  1.0f - (_val1 / 100.0f);
       _val2 =  _val2 / 100.0f;
       _val3 =  _val3 / 100.0f;
     }

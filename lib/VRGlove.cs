@@ -190,6 +190,10 @@ namespace VRGlove
         */
         Console.WriteLine("Index out of range avoided");
       }
+      catch (HardwareDisconnectException e)
+      {
+        throw e; 
+      }
       catch
       {
         /*

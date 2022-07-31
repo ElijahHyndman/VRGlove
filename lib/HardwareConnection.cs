@@ -107,8 +107,7 @@ namespace HardwareConnection
     */
     public int[] GetValues()
     {
-      /* Infinite loop to continually attempt reconnection
-      */
+      // Infinite loop to continually attempt reconnection
       while(true)
       {
         try
@@ -133,9 +132,8 @@ namespace HardwareConnection
           }
         }
 
-        /* Many possible errors may arrive while in the infinite-loop.
-          Continually retry if error occurs.
-        */
+        // Many possible errors may arrive while in the infinite-loop.
+        //  Continually retry if error occurs.
         catch (FormatException e)
         {
           /*
@@ -241,5 +239,13 @@ namespace HardwareConnection
       return receivedString.Contains(endOfMessageChar);
     }
 
+  }
+
+  public class HardwareDisconnectException : Exception
+  {
+    public HardwareDisconnectException()
+    {
+      // null exception
+    }
   }
 }

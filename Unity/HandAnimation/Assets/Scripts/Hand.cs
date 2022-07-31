@@ -26,7 +26,6 @@ public class Hand : MonoBehaviour
     void Update()
     {
       AnimateHand();
-      Debug.Log("I2: " + _JointTarget[JOINT.I2]);
     }
 
 

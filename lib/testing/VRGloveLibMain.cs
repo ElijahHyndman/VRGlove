@@ -38,7 +38,7 @@ public class MainClass {
     glove.RegisterObserver(bug);
 
     while(true){
-      glove.Update();
+        glove.Update();
     }
   }
 }

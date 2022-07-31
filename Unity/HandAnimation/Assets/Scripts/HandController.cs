@@ -14,7 +14,10 @@ public class HandController : MonoBehaviour
 
     void Start()
     {
-      controllerInput = new ArduinoInputSource();
+      InputSource input = new ArduinoInputSource();
+      // InputSource input = new ArduinoMemoryInputSource();
+      // InputSource input = new KeyboardInputSource();
+      controllerInput = input;
     }
 
 
