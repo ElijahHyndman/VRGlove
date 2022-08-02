@@ -10,6 +10,7 @@
 * Website : www.ArnabKumarDas.com
 */
 
+// Unedited constants from Arnab Kumar Das (-Group 7) 
 #ifndef F_CPU
 #define F_CPU 16000000UL // Defining the CPU Frequency
 #endif
@@ -54,6 +55,7 @@
     USART - for bluetooth 
     ADC - for analog measurements
 */
+// Partially edited intitialization function from Arnab Kumar Das (-Group 7) 
 void USART_Init()
 {
   // Set Baud Rate
@@ -67,7 +69,7 @@ void USART_Init()
   UCSR0B = (1<<RXEN0) | (1<<TXEN0);
 }
 
-
+// Hereon is original code  (-Group 7) 
 void ADC_Init()
 {
   ADMUX = 0x00;
@@ -231,7 +233,6 @@ int main()
     while(message[i] != '\0') {
       transmit(message[i++]);
     }
-    //_delay_ms(100);
 
     memIndex++;
     if(memIndex == histLength){

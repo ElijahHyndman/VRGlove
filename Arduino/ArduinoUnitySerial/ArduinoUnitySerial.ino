@@ -1,4 +1,4 @@
-int baud_rate = 9600;
+int baud_rate =  9600;
 
 int halfFreq = 20; // half of the total period in which the LED is on 
 
