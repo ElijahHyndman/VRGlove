@@ -48,7 +48,8 @@ namespace HW
   */
   public interface SerialStringManager
   {
-    void accumulate(string newReceivedInput);
+    // void accumulate(string newReceivedInput);
+    void GetFrom(SerialPort sp);
     string getMessage();
   }
 

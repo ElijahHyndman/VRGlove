@@ -67,4 +67,13 @@ namespace Connectors
       throw new Exception();
     }
   }
+
+  public class FauxConnector : HW.Connector
+  {
+    public SerialPort Connect()
+    {
+      Console.WriteLine("Faux Connector, no connection made.");
+      return null;
+    }
+  }
 }

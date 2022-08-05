@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.IO.Ports;
 using VRGlove;
 using HW;
@@ -67,9 +68,7 @@ public class Connection : HW.HardwareConnection
         // Read from Hardware Serial Connection (possibly a partial message)
         // accumulate onto gathered messages
         // If we received complete message, process it
-        String newSerialInput = _SerialPort.ReadExisting();
-
-        _StringManager.accumulate(newSerialInput);
+        _StringManager.GetFrom(_SerialPort);
 
         String message = _StringManager.getMessage();
 
@@ -94,7 +93,7 @@ public class Connection : HW.HardwareConnection
       //  Continually retry if error occurs.
       catch (FormatException e)
       {
-        Console.WriteLine("FormatException.\n"+ e.Message);
+        // Console.WriteLine("FormatException.\n"+ e.Message);
         /*
           SerialBuffer overfilled or underfilled with values
           CONTINUE
@@ -131,6 +130,39 @@ public class Connection : HW.HardwareConnection
         */
       }
     }
+  }
+}
+
+
+public class ConnectionTimingWrapper : HW.HardwareConnection
+{
+  // Nanoseconds per tick code from http://threadedminds.blogspot.com/2015/10/measure-time-milliseconds-micorseconds-nanoseconds-csharp.html
+  HardwareConnection _Real;
+  Stopwatch _Stopwatch;
+  double frequency;
+  double nanosecPerTick;
+
+  public double NanoSecondsElapsed {
+    get { return _Stopwatch.ElapsedTicks * nanosecPerTick;}
+    set {}
+  }
+
+  public ConnectionTimingWrapper(HardwareConnection real)
+  {
+    this._Real = real;
+    frequency = Stopwatch.Frequency;
+    nanosecPerTick = (1000 * 1000 * 1000) / frequency;
+  }
+
+  public int[] GetValues()
+  {
+    _Stopwatch = Stopwatch.StartNew();
+
+    int[] values = _Real.GetValues();
+
+    _Stopwatch.Stop();
+
+    return values;
   }
 }
 
@@ -175,9 +207,16 @@ namespace SerialStringManagers
     char endOfMessageChar = '\n';
 
     // Accumulate new partial string
-    public void accumulate(string newReceivedInput)
+    private void accumulate(string newReceivedInput)
     {
       receivedString = receivedString + newReceivedInput;
+    }
+
+
+    public void GetFrom(SerialPort sp)
+    {
+      String newSerialInput = sp.ReadExisting();
+      this.accumulate(newSerialInput);
     }
 
 
@@ -220,7 +259,7 @@ namespace SerialStringManagers
     {
       this._ConstantMessage = constantMessage;
     }
-    public void accumulate(string newReceivedInput)
+    public void GetFrom(SerialPort sp)
     {
       // do nothing
     }

@@ -47,4 +47,29 @@ namespace SerialInterpreters
       return values;
     }
   }
+
+  public class DelimitedUTFChars : HW.SerialInterpreter
+  {
+    private string delimiter;
+
+    public DelimitedUTFChars(string delimiter = ".")
+    {
+      this.delimiter = delimiter;
+    }
+
+    public int[] ValuesFrom(string serialString)
+    {
+      // Get values from delimited string
+      string[] tokens = serialString.Split(this.delimiter);
+      int size = tokens.Length;
+      int[] values = new int[size];
+
+      // Convert to integers
+      for (int idx = 0; idx < size; idx ++)
+      {
+        values[idx] = (int) tokens[idx][0];
+      }
+      return values;
+    }
+  }
 }

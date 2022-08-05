@@ -1,5 +1,5 @@
 using VRGlove;
-using HardwareConnection;
+using HW;
 using System;
 
 
@@ -31,8 +31,8 @@ public class MainClass {
   public static void Main(string[] args) {
     int[] pattern = new int[] {JOINT.I1, JOINT.I2, JOINT.IM};
     HardwareConnection HW = new Connection(       connector : new Connectors.MacOS( baudRate : 9600, deviceName : "tty.DSDTECHHC-05"),
-                                          stringManager : new SerialStringAccumulator(),
-                                          interpreter : new SerialInterpreters.DelimitedInts() );
+                                                  stringManager : new SerialStringManagers.SerialStringAccumulator(),
+                                                  interpreter : new SerialInterpreters.DelimitedInts() );
 
     Glove glove = new Glove( hardwareConnection : HW , pattern : pattern);
 
