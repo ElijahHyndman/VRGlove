@@ -1,4 +1,4 @@
-using HardwareConnection;
+using HW;
 using System;
 using VRGlove;
 
@@ -9,7 +9,7 @@ namespace SerialInterpreters
   /*
       Null Implementation
   */
-  public class Null : HardwareConnection.SerialInterpreter
+  public class Null : HW.SerialInterpreter
   {
     public int[] ValuesFrom(string serialString)
     {
@@ -23,7 +23,7 @@ namespace SerialInterpreters
       Delimited Implentation
       SerialInput which is list of integers separated by a delimiter
   */
-  public class DelimitedInts : HardwareConnection.SerialInterpreter
+  public class DelimitedInts : HW.SerialInterpreter
   {
     private string delimiter;
 

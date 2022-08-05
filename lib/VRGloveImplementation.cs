@@ -1,4 +1,4 @@
-using HardwareConnection;
+using HW;
 using System.Collections.Generic;
 using System;
 using VRGlove;
@@ -7,7 +7,7 @@ using VRGlove;
 public class Glove : VRGlove.VRGlove
 {
 
-  private Connection Hardware;
+  private HW.HardwareConnection Hardware;
 
   private List<GloveObserver> Observers;
 
@@ -42,7 +42,7 @@ public class Glove : VRGlove.VRGlove
     {JOINT.P3, 0},
   };
 
-  public Glove(Connection hardwareConnection, int[] pattern )
+  public Glove(HW.HardwareConnection hardwareConnection, int[] pattern )
   {
     this.Hardware = hardwareConnection;
     this.JointPattern = pattern;

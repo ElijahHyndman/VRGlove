@@ -2,7 +2,7 @@ using System;
 using System.IO.Ports;
 using VRGlove;
 
-namespace HardwareConnection
+namespace HW
 {
 
 
@@ -35,6 +35,21 @@ namespace HardwareConnection
   {
     // For this given SerialInterpreter type/format interpretation, interpret the Serial Connection's string into useful values
     int[] ValuesFrom(string serialString);
+  }
+
+  /*
+    SerialStringManager behavior
+
+    manages strings coming from serial to compensate for Arduino v. Computer timing differences.
+
+    Messages may be partially written or multiple messages may be written, accumulate and parse these into complete messages.
+    Feed a complete message back, or feed Null to indicate that complete message is not prepared yet.
+
+  */
+  public interface SerialStringManager
+  {
+    void accumulate(string newReceivedInput);
+    string getMessage();
   }
 
 

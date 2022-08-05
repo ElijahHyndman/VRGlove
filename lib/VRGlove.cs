@@ -1,4 +1,4 @@
-using HardwareConnection;
+using HW;
 using System.Collections.Generic;
 using System;
 

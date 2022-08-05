@@ -1,4 +1,4 @@
-using HardwareConnection;
+using HW;
 using VRGlove;
 
 namespace GloveObservers

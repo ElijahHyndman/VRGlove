@@ -1,5 +1,5 @@
 using System;
-using HardwareConnection;
+using HW;
 using System.IO;
 using System.IO.Ports;
 
@@ -10,20 +10,20 @@ namespace Connectors
   /*
       Mac OS implementation
   */
-  public class MacOS : HardwareConnection.Connector
+  public class MacOS : HW.Connector
   {
     private const string MAC_DEFAULT_USB_GLOB = "tty.usbserial-*";
     /*
         Variables
     */
     private int baudRate;
-    private string USBGlob;
+    private string _DeviceNameGlob;
     private SerialPort _serialPort;
 
-    public MacOS(int baudRate, string USBGlob=MAC_DEFAULT_USB_GLOB)
+    public MacOS(int baudRate, string deviceName=MAC_DEFAULT_USB_GLOB)
     {
       this.baudRate = baudRate;
-      this.USBGlob = USBGlob;
+      this._DeviceNameGlob = deviceName;
     }
 
     /*
@@ -31,11 +31,10 @@ namespace Connectors
     */
     public SerialPort Connect()
     {
-      SerialPort _serialPort;
       string searchDirectoryPath = "/dev/";
 
       // Get all current USB devices
-      string[] currentConnectedDevices = Directory.GetFiles(searchDirectoryPath, USBGlob); // Search for USB
+      string[] currentConnectedDevices = Directory.GetFiles(searchDirectoryPath, _DeviceNameGlob); // Search for USB
       foreach(string devicePath in currentConnectedDevices )
       {
           //Console.WriteLine(devicePath);
